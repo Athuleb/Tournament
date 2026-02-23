@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KKMMPTC Football Tournament 2026</title>
+    <link rel="stylesheet" href="{% static 'tournament/css/style.css' %}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- AOS Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">KKMMPTC</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#register">Register</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#coordinators">Coordinators</a></li>
+            <li><a href="#sponsors">Sponsors</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a href="{% url 'tournament:admin_login' %}" class="btn-secondary"
+                style="padding: 0.5rem 1.2rem; font-size: 0.9rem; margin-right: 10px;">Admin</a>
+            <a href="#register" class="btn-primary-sm">Register Now</a>
+        </div>
+        <div class="menu-toggle" id="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="hero">
+            <div class="overlay"></div>
+            <div class="hero-content">
+                <h1 class="fade-in">KKMMPTC Kallettumkara Thrissur</h1>
+                <p class="fade-in">Established in 1993, K. Karunakaran Memorial Model Polytechnic College is a premier
+                    technical institution under IHRD, dedicated to nurturing excellence in engineering and technology
+                    across 12.375 acres of green campus.</p>
+                <div class="hero-btns fade-in">
+                    <a href="#register" class="btn-primary">Explore Tournament</a>
+                    <a href="#contact" class="btn-secondary">Contact Us</a>
+                </div>
+            </div>
+            <div class="hero-image-container fade-in">
+                <img src="{% static 'tournament/images/kkmmptc.jpg' %}" alt="KKMMPTC College Building" class="hero-img">
+            </div>
+        </section>
+
+        <!-- Event Section -->
+        <section id="event" class="section event-section">
+            <h2 class="section-title">Football Tournament</h2>
+            <div class="event-container">
+                <div class="event-card">
+                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800"
+                        alt="Football Match" class="event-img">
+                    <div class="event-details">
+                        <h3>Inter-Polytechnic Championship</h3>
+                        <p>Join the most anticipated football tournament of the year. Showcase your skill, teamwork, and
+                            passion on the grand stage.</p>
+                        <a href="#register" class="btn-primary">Register Your Team</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="section gallery-section">
+            <h2 class="section-title">Tournament Gallery</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item"><img
+                        src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&q=80&w=400"
+                        alt="Gallery 1"></div>
+                <div class="gallery-item"><img
+                        src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=400"
+                        alt="Gallery 2"></div>
+                <div class="gallery-item"><img
+                        src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&q=80&w=400"
+                        alt="Gallery 3"></div>
+                <div class="gallery-item"><img
+                        src="https://images.unsplash.com/photo-1518091043644-c1d445bb5122?auto=format&fit=crop&q=80&w=400"
+                        alt="Gallery 4"></div>
+                <div class="gallery-item"><img
+                        src="https://images.unsplash.com/photo-1560272564-c83b66b1ad12?auto=format&fit=crop&q=80&w=400"
+                        alt="Gallery 5"></div>
+                <div class="gallery-item"><img
+                        src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&q=80&w=400"
+                        alt="Gallery 6"></div>
+            </div>
+        </section>
+
+        <!-- Coordinators Section -->
+        <section id="coordinators" class="section coordinators-section">
+            <h2 class="section-title">Our Coordinators</h2>
+            <div class="coordinator-types">
+                <div class="coord-group">
+                    <h3>Staff Coordinator</h3>
+                    <div class="coord-card">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300"
+                            alt="Staff Coordinator">
+                        <h4>Prof. Rajesh Kumar</h4>
+                        <p>Physical Education Dept.</p>
+                    </div>
+                </div>
+                <div class="coord-group">
+                    <h3>Student Coordinator</h3>
+                    <div class="coord-card">
+                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300"
+                            alt="Student Coordinator">
+                        <h4>Abhinav S</h4>
+                        <p>Computer Science Dept.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sponsors Section -->
+        <section id="sponsors" class="section sponsors-section">
+            <h2 class="section-title">Our Sponsors</h2>
+            <div class="sponsor-grid">
+                <div class="sponsor-item">
+                    <img src="https://images.unsplash.com/photo-1599305090598-fe179d501c27?auto=format&fit=crop&q=80&w=200"
+                        alt="Sponsor 1">
+                    <span>Apex Sports</span>
+                </div>
+                <div class="sponsor-item">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=200"
+                        alt="Sponsor 2">
+                    <span>TechVision</span>
+                </div>
+                <div class="sponsor-item">
+                    <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=200"
+                        alt="Sponsor 3">
+                    <span>Pure Hydration</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="register" class="section registration-section">
+            <h2 class="section-title">Tournament Registration</h2>
+            <div class="registration-container">
+                <div class="registration-card">
+                    <form id="registrationForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="collegeName">College Name</label>
+                                {{ form.college }}
+                            </div>
+                            <div class="form-group">
+                                <label for="studentName">Student Name</label>
+                                {{ form.name }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prn">PRN Number</label>
+                                {{ form.prn }}
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                {{ form.department }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentPhoto">Upload Photo</label>
+                            {{ form.photo }}
+                            <div id="photoPreview" class="photo-preview"></div>
+                        </div>
+                        <button type="submit" class="btn-primary w-100">Submit Registration</button>
+                    </form>
+                    <div id="message" class="message"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i data-lucide="phone"></i>
+                        <p>+91 98765 43210</p>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="mail"></i>
+                        <p>tournament@kkmmp tck.ac.in</p>
+                    </div>
+                    <div class="info-item">
+                        <i data-lucide="map-pin"></i>
+                        <p>Kallettumkara, Thrissur, Kerala</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <footer>
+        <p>&copy; 2026 KKMMPTC Football Tournament. All rights reserved. | <a href="{% url 'tournament:admin_login' %}"
+                style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem;">Admin Login</a></p>
+    </footer>
+
+    <script>
+        const REGISTRATION_URL = "{% url 'tournament:index' %}";
+    </script>
+    <script src="{% static 'tournament/js/app.js' %}"></script>
+</body>
+
+</html>
