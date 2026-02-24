@@ -14,7 +14,7 @@ class College(models.Model):
 class Registration(models.Model):
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='registrations')
     name = models.CharField(max_length=100)
-    prn = models.CharField(max_length=50)
+    prn = models.CharField(max_length=50, unique=True)
     department = models.CharField(max_length=100)
     photo = models.ImageField(upload_to='student_photos/')
     created_at = models.DateTimeField(auto_now_add=True)

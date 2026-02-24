@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | KKMMPTC Tournament</title>
+    <title>Admin Dashboard |Football Tournament</title>
     <link rel="stylesheet" href="{% static 'tournament/css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
@@ -14,7 +14,7 @@
             padding: 120px 5% 60px;
             min-height: 100vh;
         }
-        .stats-grid {
+        .stats-grid { 
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
@@ -117,6 +117,16 @@
     </nav>
 
     <div class="dashboard-wrapper">
+        {% if messages %}
+            <div style="margin-bottom: 30px;">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }} show" style="display: block; width: 100%; max-width: 100%; margin-bottom: 10px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <div class="filter-bar">
             <h2>Registrations <span style="color: var(--text-muted); font-size: 1rem; font-weight: 400;">({{ students.count }} total)</span></h2>
             
@@ -129,9 +139,10 @@
                         {% endfor %}
                     </select>
                 </form>
+
                 <a href="{% url 'tournament:export_students_pdf' %}?college={{ selected_college|default:'' }}" class="btn-primary-sm">
                     <i data-lucide="download" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;"></i>
-                    Export PDF
+                    Export Details
                 </a>
             </div>
         </div>
@@ -146,6 +157,7 @@
                         <th>Department</th>
                         <th>College</th>
                         <th>Date</th>
+                        <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -165,8 +177,18 @@
                         <td>{{ student.department }}</td>
                         <td>{{ student.college.name }}</td>
                         <td style="color: var(--text-muted);">{{ student.created_at|date:"d M Y" }}</td>
+                        <td style="text-align: right;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <a href="{% url 'tournament:edit_student' student.id %}" class="btn-secondary" style="padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; background: rgba(0, 242, 254, 0.05); border-color: rgba(0, 242, 254, 0.2);">
+                                    <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                                </a>
+                                <a href="{% url 'tournament:delete_student' student.id %}" class="logout-btn" style="padding: 6px 10px; border-radius: 8px; font-size: 0.8rem;" onclick="return confirm('Are you sure you want to delete this registration?')">
+                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                </a>
+                            </div>
+                        </td>
                     </tr>
-                    {% empty %}
+{% empty %}
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
                             No registrations found.

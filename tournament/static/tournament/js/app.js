@@ -56,7 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            console.log('Form submission started');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // Start loading state
+            submitBtn.classList.add('btn-loading');
+            messageDiv.classList.remove('show');
+            messageDiv.style.display = 'none';
 
             const formData = new FormData(form);
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -73,29 +78,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
 
-                if (data.status === 'success') {
-                    messageDiv.textContent = data.message;
-                    messageDiv.className = 'message success';
-                    messageDiv.style.display = 'block';
+                // Stop loading state
+                submitBtn.classList.remove('btn-loading');
 
-                    if (data.download_pdf) {
+                if (data.status === 'success') {
+                    // Trigger Goal Animation
+                    const goalOverlay = document.getElementById('goalOverlay');
+                    if (goalOverlay) {
+                        goalOverlay.style.display = 'flex';
+                        goalOverlay.classList.add('animating');
                         setTimeout(() => {
-                            window.location.href = `/download-pdf/${data.college_id}/`;
+                            goalOverlay.classList.remove('animating');
+                            goalOverlay.style.display = 'none';
                         }, 2000);
                     }
 
+                    messageDiv.textContent = data.message;
+                    messageDiv.className = 'message success show';
+
                     form.reset();
-                    photoPreview.innerHTML = '';
+                    if (photoPreview) photoPreview.innerHTML = '';
+
+                    // Smoothly scroll to message if on mobile
+                    if (window.innerWidth < 768) {
+                        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 } else {
                     messageDiv.textContent = data.message;
-                    messageDiv.className = 'message error';
-                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message error show';
                 }
             } catch (error) {
+                submitBtn.classList.remove('btn-loading');
                 console.error('Error:', error);
                 messageDiv.textContent = 'An error occurred. Please try again.';
-                messageDiv.className = 'message error';
-                messageDiv.style.display = 'block';
+                messageDiv.className = 'message error show';
             }
         });
     }

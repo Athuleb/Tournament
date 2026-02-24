@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student | Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'tournament/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .edit-wrapper {
+            padding: 120px 5% 60px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .edit-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 600px;
+            backdrop-filter: blur(15px);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            color: var(--text);
+            outline: none;
+            transition: var(--transition);
+        }
+        .form-control:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .current-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid var(--primary);
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+        }
+        .errorlist {
+            color: #f87171;
+            font-size: 0.85rem;
+            list-style: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">KKMMPTC ADMIN</div>
+        <a href="{% url 'tournament:admin_dashboard' %}" class="btn-secondary" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;">Back to Dashboard</a>
+    </nav>
+
+    <div class="edit-wrapper">
+        <div class="edit-card">
+            <h2 style="margin-bottom: 2rem;">Edit Student Details</h2>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>College</label>
+                    {{ form.college }}
+                    {{ form.college.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Student Name</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>PRN Number</label>
+                    {{ form.prn }}
+                    {{ form.prn.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Department</label>
+                    {{ form.department }}
+                    {{ form.department.errors }}
+                </div>
+
+                <div class="form-group">
+                    <label>Profile Photo</label>
+                    {% if student.photo %}
+                        <img src="{{ student.photo.url }}" class="current-photo">
+                    {% endif %}
+                    {{ form.photo }}
+                    {{ form.photo.errors }}
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Save Changes</button>
+                    <a href="{% url 'tournament:admin_dashboard' %}" class="btn-secondary" style="width: 100%; text-align: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

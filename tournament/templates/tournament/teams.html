@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams & Fixtures | Football Tournament 2026</title>
+    <link rel="stylesheet" href="{% static 'tournament/css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">KKMMPTC</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'tournament:index' %}">Home</a></li>
+            <li><a href="{% url 'tournament:index' %}#register">Register</a></li>
+            <li><a href="{% url 'tournament:index' %}#coordinators">Coordinators</a></li>
+            <li><a href="{% url 'tournament:index' %}#sponsors">Sponsors</a></li>
+            <li><a href="{% url 'tournament:index' %}#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main style="padding-top: 100px;">
+        <!-- Teams Grid -->
+        <section class="section visible" style="opacity: 1; transform: none;">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">Participating Teams</h2>
+                <div style="text-align: center; margin-bottom: 2rem; color: var(--text-muted);">
+                    <span style="background: var(--glass); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--border);">
+                       Total Registered Teams: {{ colleges|length }}
+                    </span>
+                </div>
+                <div class="teams-grid">
+                    {% for college in colleges %}
+                    <div class="team-card" style="opacity: 1 !important; transform: none !important;">
+                        <div class="team-icon">🛡️</div>
+                        <h3 style="color: #fff; text-shadow: 0 0 10px rgba(0,242,254,0.3);">{{ college.name|title }}</h3>
+                        <div style="margin-top: 15px; padding: 5px 15px; background: rgba(0, 242, 254, 0.1); border-radius: 50px; border: 1px solid rgba(0, 242, 254, 0.2);">
+                            <p style="color: var(--primary); font-size: 0.85rem; font-weight: 600; margin: 0;">
+                                Squad: {{ college.registrations.count }}/18
+                            </p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div style="text-align: center; grid-column: 1/-1; padding: 3rem; background: var(--card-bg); border-radius: 20px;">
+                        <p>No teams found. Please ensure colleges are initialized in the database.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Fixture Section -->
+        <section id="fixture" class="section fixture-section visible" style="background: rgba(15, 23, 42, 0.5);">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">Tournament Bracket</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 3rem;" data-aos="fade-up">Official Demo Fixture for Football Tournament 2026</p>
+                
+                <div class="bracket-container">
+                    <!-- Quarter Finals -->
+                    <div class="round" data-aos="fade-right">
+                        <h3>Quarter Finals</h3>
+                        <div class="match">
+                            <div class="team">Theyagaraja Polytechnic</div>
+                            <div class="vs">VS</div>
+                            <div class="team">Sree Rama Polytechnic</div>
+                        </div>
+                        <div class="match">
+                            <div class="team">Govt. Polytechnic, Kunnakulam</div>
+                            <div class="vs">VS</div>
+                            <div class="team">Model Polytechnic, Vadakara</div>
+                        </div>
+                        <div class="match">
+                            <div class="team">KKMMPTC, Kallettumkara</div>
+                            <div class="vs">VS</div>
+                            <div class="team">Holy Grace Polytechnic</div>
+                        </div>
+                        <div class="match">
+                            <div class="team">Mets Polytechnic, Mala</div>
+                            <div class="vs">VS</div>
+                            <div class="team">Iccs Polytechnic, Mupliyam</div>
+                        </div>
+                    </div>
+
+                    <!-- Semi Finals -->
+                    <div class="round" data-aos="fade-up">
+                        <h3>Semi Finals</h3>
+                        <div class="match">
+                            <div class="team placeholder">Winner Match 1</div>
+                            <div class="vs">VS</div>
+                            <div class="team placeholder">Winner Match 2</div>
+                        </div>
+                        <div class="match">
+                            <div class="team placeholder">Winner Match 3</div>
+                            <div class="vs">VS</div>
+                            <div class="team placeholder">Winner Match 4</div>
+                        </div>
+                    </div>
+
+                    <!-- Final -->
+                    <div class="round" data-aos="fade-left">
+                        <h3>Grand Final</h3>
+                        <div class="match final">
+                            <div class="team placeholder">Finalist 1</div>
+                            <div class="vs">VS</div>
+                            <div class="team placeholder">Finalist 2</div>
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <span style="color: var(--primary); font-weight: 800; font-size: 1.2rem;">🏆 CHAMPION</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Football Decorations -->
+    <div class="floating-ball ball-1"><i data-lucide="circle-dot"></i></div>
+    <div class="floating-ball ball-2"><i data-lucide="circle-dot"></i></div>
+    <div class="floating-ball ball-3"><i data-lucide="circle-dot"></i></div>
+
+    <footer>
+        <p>&copy; 2026 Football Tournament. All rights reserved. | <a href="{% url 'tournament:admin_login' %}"
+                style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem;">Admin Login</a></p>
+    </footer>
+
+    <script src="{% static 'tournament/js/app.js' %}"></script>
+</body>
+</html>
