@@ -5,8 +5,11 @@ app_name = 'tournament'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('registration/', views.registration_page, name='registration_page'),
     path('teams/', views.teams, name='teams'),
+    path('college-logout/', views.college_logout, name='college_logout'),
     path('download-pdf/<int:college_id>/', views.download_pdf, name='download_pdf'),
+    path('edit-student/<int:student_id>/', views.edit_student_college, name='edit_student_college'),
     
     # Custom Admin Routes
     path('admin-panel/login/', views.admin_login, name='admin_login'),

@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 
 class College(models.Model):
     name = models.CharField(max_length=200, unique=True)
+    username = models.CharField(max_length=150, unique=True, null=True, blank=True)
+    password = models.CharField(max_length=128, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -20,10 +22,12 @@ class Registration(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
-        # We handle this in the view for better UX with AJAX, 
-        # but kept here for model-level safety.
-        if self.college.registrations.count() >= 18:
-            raise ValidationError(f"The 18 student registration for {self.college.name} is completed.")
+        # Only check if college is assigned
+        try:
+            if not self.pk and self.college and self.college.registrations.count() >= 18:
+                raise ValidationError(f"The 18 student registration for {self.college.name} is completed.")
+        except (College.DoesNotExist, AttributeError):
+            pass
 
     def save(self, *args, **kwargs):
         # self.full_clean() # We'll skip call here to avoid double check if view handles it

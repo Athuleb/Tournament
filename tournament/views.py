@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from .models import College, Registration
 from .forms import RegistrationForm
 from reportlab.pdfgen import canvas
@@ -16,24 +17,32 @@ from django.conf import settings
 import os
 
 def index(request):
-    # Ensure colleges exist
-    if not College.objects.exists():
-        college_names = [
-            "Theyagaraja polytechnic, amballur",
-            "Sree rama polytechnic, thriprayar",
-            "Govt. Polytechnic, kunnakulam",
-            "Model polytechnic, vadakara",
-            "Kkmmptc, kallettumkara",
-            "Holy grace polytechnic, mala",
-            "Mets polytechnic, mala",
-            "Iccs polytechnic, mupliyam"
-        ]
-        for name in college_names:
-            College.objects.get_or_create(name=name)
-
-    colleges = College.objects.all()
+    college_id = request.session.get('college_id')
+    logged_in_college = None
     
+    if college_id:
+        try:
+            logged_in_college = College.objects.get(id=college_id)
+        except College.DoesNotExist:
+            request.session.flush()
+
     if request.method == 'POST':
+        # Handle Login first if not logged in
+        if not logged_in_college:
+            college_id = request.POST.get('college_id')
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            try:
+                college = College.objects.get(id=college_id, username=username)
+                if check_password(password, college.password):
+                    request.session['college_id'] = college.id
+                    return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Invalid password for the selected college.'})
+            except College.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Username not found for the selected college.'})
+
+        # Handle Registration if logged in
         form = RegistrationForm(request.POST, request.FILES)
         
         # Check for existing PRN manually for a better error message
@@ -47,6 +56,13 @@ def index(request):
         if form.is_valid():
             college = form.cleaned_data['college']
             
+            # Ensure they only register for THEIR college
+            if college != logged_in_college:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'You can only register students for your own college.'
+                })
+
             # Re-check limit on server side
             if college.registrations.count() >= 18:
                 return JsonResponse({
@@ -61,12 +77,12 @@ def index(request):
                 if college.registrations.count() == 18:
                      return JsonResponse({
                          'status': 'success', 
-                         'message': '🎉 Registration successful! You are the final member of the team. The 18-student limit for your college is now reached.'
+                         'message': 'Registration is successful! You are the final member of the team.'
                      })
                 
                 return JsonResponse({
                     'status': 'success', 
-                    'message': '✅ Registration completed successfully! Good luck for the tournament.'
+                    'message': 'Registration is successful'
                 })
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Submission failed: {str(e)}'})
@@ -81,8 +97,116 @@ def index(request):
                     error_msg += f"{clean_field}: {error['message']} "
             return JsonResponse({'status': 'error', 'message': error_msg})
 
+    colleges = College.objects.all()
     form = RegistrationForm()
-    return render(request, 'tournament/index.html', {'form': form, 'colleges': colleges})
+    # If logged in, pre-select the college
+    if logged_in_college:
+        form.fields['college'].initial = logged_in_college
+        
+    return render(request, 'tournament/index.html', {
+        'form': form, 
+        'colleges': colleges,
+        'logged_in_college': logged_in_college
+    })
+
+def registration_page(request):
+    college_id = request.session.get('college_id')
+    logged_in_college = None
+    
+    if college_id:
+        try:
+            logged_in_college = College.objects.get(id=college_id)
+        except College.DoesNotExist:
+            request.session.flush()
+
+    if request.method == 'POST':
+        # Handle Login first if not logged in
+        if not logged_in_college:
+            college_id = request.POST.get('college_id')
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            try:
+                college = College.objects.get(id=college_id, username=username)
+                if check_password(password, college.password):
+                    request.session['college_id'] = college.id
+                    return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Invalid password for the selected college.'})
+            except College.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Username not found for the selected college.'})
+
+        # Handle Registration if logged in
+        form = RegistrationForm(request.POST, request.FILES)
+        
+        prn = request.POST.get('prn')
+        if prn and Registration.objects.filter(prn=prn).exists():
+            return JsonResponse({
+                'status': 'error',
+                'message': f'⚠️ Warning: A student with PRN "{prn}" is already registered.'
+            })
+
+        if form.is_valid():
+            college = form.cleaned_data['college']
+            if college != logged_in_college:
+                return JsonResponse({'status': 'error', 'message': 'Invalid college selection.'})
+
+            if college.registrations.count() >= 18:
+                return JsonResponse({'status': 'error', 'message': 'Registration limit reached.'})
+            
+            try:
+                form.save()
+                return JsonResponse({'status': 'success', 'message': 'Registration successful'})
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f'Submission failed: {str(e)}'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Form invalid'})
+
+    colleges = College.objects.all()
+    form = RegistrationForm()
+    students = []
+    if logged_in_college:
+        form.fields['college'].initial = logged_in_college
+        students = Registration.objects.filter(college=logged_in_college).order_by('-created_at')
+        
+    return render(request, 'tournament/registration.html', {
+        'form': form, 
+        'colleges': colleges,
+        'logged_in_college': logged_in_college,
+        'students': students
+    })
+
+def edit_student_college(request, student_id):
+    college_id = request.session.get('college_id')
+    if not college_id:
+        return redirect('tournament:registration_page')
+        
+    try:
+        college = College.objects.get(id=college_id)
+        student = Registration.objects.get(id=student_id, college=college)
+    except (College.DoesNotExist, Registration.DoesNotExist):
+        return redirect('tournament:registration_page')
+
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Details for {student.name} updated successfully.")
+            return redirect('tournament:registration_page')
+    else:
+        form = RegistrationForm(instance=student)
+        # Ensure college field is correct and disabled
+        form.fields['college'].initial = college
+    
+    return render(request, 'tournament/edit_student_college.html', {
+        'form': form,
+        'student': student,
+        'college': college
+    })
+
+def college_logout(request):
+    if 'college_id' in request.session:
+        del request.session['college_id']
+    return redirect('tournament:index')
 
 def teams(request):
     college_names = [
@@ -118,9 +242,15 @@ def download_pdf(request, college_id):
         'TitleStyle',
         parent=styles['Heading1'],
         fontSize=18,
-        alignment=1,  # Center
-        spaceAfter=30,
+        alignment=1,
+        spaceAfter=10,
         fontName='Helvetica-Bold'
+    )
+    
+    header_style = ParagraphStyle(
+        'HeaderStyle',
+        parent=title_style,
+        spaceAfter=30
     )
     
     body_style = ParagraphStyle(
@@ -128,7 +258,7 @@ def download_pdf(request, college_id):
         parent=styles['Normal'],
         fontSize=12,
         leading=16,
-        alignment=4,  # Justified
+        alignment=4,
         spaceAfter=15
     )
 
@@ -139,9 +269,11 @@ def download_pdf(request, college_id):
         leading=16,
         spaceAfter=10
     )
-
-    # 1. Main Title
-    elements.append(Paragraph("DECLARATION", title_style))
+    
+    # 1. Main Titles
+    elements.append(Paragraph("FOOTBALL TOURNAMENT 2026", title_style))
+    elements.append(Paragraph("PARTICIPATING STUDENT LIST", title_style))
+    elements.append(Paragraph("REGISTRATION DETAILS", header_style))
 
     # 2. Declaration Text
     declaration_1 = f"We hereby declare that we are bonafide students of <b>{college.name}</b> and we are participating in the Football Tournament conducted by the institution."
@@ -163,7 +295,7 @@ def download_pdf(request, college_id):
             img = "No Photo"
         data.append([str(i), student.name, student.prn, student.department, img])
 
-    table = Table(data, colWidths=[0.5*inch, 1.8*inch, 1.2*inch, 1.2*inch, 0.8*inch])
+    table = Table(data, colWidths=[0.5*inch, 1.8*inch, 1.2*inch, 2.0*inch, 0.8*inch])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -176,20 +308,19 @@ def download_pdf(request, college_id):
 
     elements.append(Spacer(1, 0.5*inch))
 
-    # 4. Footer info (Date, Place, Signatures)
+    # 4. Footer info (Date and Place on left, Signatures on right)
     footer_data = [
-        [Paragraph("Date: ____________", label_style), ""],
-        [Paragraph("Place: ____________", label_style), ""],
+        [Paragraph("Date: ____________", label_style), Paragraph("__________________________", label_style)],
+        [Paragraph("Place: ____________", label_style), Paragraph("Signature of Principal", label_style)],
         [Spacer(1, 0.4*inch), Spacer(1, 0.4*inch)],
-        [Paragraph("Signature of Principal: ____________________", label_style), ""],
-        [Paragraph("Signature of Sports Coordinator: ____________________", label_style), ""]
+        ["", Paragraph("__________________________", label_style)],
+        ["", Paragraph("Signature of Sports Coordinator", label_style)]
     ]
     
-    # We use a table for positioning the footer elements
-    footer_table = Table(footer_data, colWidths=[4*inch, 1*inch])
+    footer_table = Table(footer_data, colWidths=[2.5*inch, 3*inch])
     footer_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'), # Align signatures to the right
     ]))
     elements.append(footer_table)
 
@@ -219,7 +350,7 @@ def admin_login(request):
 
 def admin_logout(request):
     logout(request)
-    return redirect('tournament:admin_login')
+    return redirect('tournament:index')
 
 @login_required(login_url='tournament:admin_login')
 def admin_dashboard(request):
@@ -253,8 +384,8 @@ def export_students_pdf(request):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     buffer = io.BytesIO()
-    # Increased margins for a formal "official paper" look
-    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=72)
+    # Increased margins for a formal "official paper" look but adjusted for better table fitting
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=36, leftMargin=36, topMargin=72, bottomMargin=72)
     elements = []
     styles = getSampleStyleSheet()
 
@@ -315,7 +446,7 @@ def export_students_pdf(request):
             data.append([str(i), student.name, student.prn, student.department, img])
 
         # Table dimensions (Total A4 width is ~595 pts, minus margins 144 pts = 451 pts)
-        table = Table(data, colWidths=[0.4*inch, 1.8*inch, 1.2*inch, 1.2*inch, 0.9*inch])
+        table = Table(data, colWidths=[0.4*inch, 1.8*inch, 1.2*inch, 2.0*inch, 0.9*inch])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#f1f5f9")),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
@@ -331,8 +462,8 @@ def export_students_pdf(request):
 
         elements.append(Spacer(1, 0.6*inch))
 
-        # 4. Signatures (Arranged side-by-side)
-        sig_body = ParagraphStyle('SigBody', parent=styles['Normal'], fontSize=10, leading=14)
+        # 4. Signatures (Date/Place on left, Signatures on right)
+        sig_body = ParagraphStyle('SigBody', parent=styles['Normal'], fontSize=11, leading=16)
         
         sig_data = [
             [Paragraph("Date: ____________", sig_body), Paragraph("__________________________", sig_body)],
@@ -342,11 +473,10 @@ def export_students_pdf(request):
             ["", Paragraph("Signature of Sports Coordinator", sig_body)]
         ]
         
-        # Table for alignment (Left info, Right signatures)
         sig_table = Table(sig_data, colWidths=[2.5*inch, 3*inch])
         sig_table.setStyle(TableStyle([
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('ALIGN', (1, 0), (1, -1), 'RIGHT'), # Align signatures to the right
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
         ]))
         elements.append(sig_table)
 
@@ -363,7 +493,7 @@ def export_students_pdf(request):
                 img = "No Photo"
             data.append([str(i), student.name, student.prn, student.department, student.college.name, img])
 
-        table = Table(data, colWidths=[0.3*inch, 1.2*inch, 1.1*inch, 1.1*inch, 1.3*inch, 0.8*inch])
+        table = Table(data, colWidths=[0.3*inch, 1.2*inch, 1.1*inch, 2.0*inch, 1.8*inch, 0.8*inch])
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#4facfe")),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),

@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration - Football Tournament 2k26</title>
+    <link rel="stylesheet" href="{% static 'tournament/css/style.css' %}?v=16">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- AOS Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="{% url 'tournament:index' %}" class="logo">KKMMPTC</a>
+        <ul class="nav-links">
+            <li><a href="{% url 'tournament:index' %}#home">Home</a></li>
+            <li><a href="{% url 'tournament:index' %}#event">Events</a></li>
+            <li><a href="{% url 'tournament:index' %}#coordinators">Coordinators</a></li>
+            <li><a href="{% url 'tournament:index' %}#sponsors">Sponsors</a></li>
+            <li><a href="{% url 'tournament:index' %}#contact">Contact</a></li>
+        </ul>
+        
+        <div class="menu-toggle" id="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main style="padding-top: 100px; min-height: 80vh;">
+        <!-- Registration Section -->
+        <section id="register" class="section registration-section">
+            {% if logged_in_college %}
+            <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 20px; padding: 0 20px;">
+                <h2 class="section-title" style="margin: 0;">Registration for {{ logged_in_college.name }}</h2>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{% url 'tournament:download_pdf' logged_in_college.id %}" class="btn-primary-sm" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+                        <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+                        Download Team List
+                    </a>
+                    <a href="{% url 'tournament:college_logout' %}" class="btn-secondary" style="padding: 10px 20px;">Logout</a>
+                </div>
+            </div>
+            <div class="registration-container" data-aos="zoom-in">
+                <div class="registration-card">
+                    <form id="registrationForm" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <!-- Hidden field for college since it's already known -->
+                        <input type="hidden" name="college" value="{{ logged_in_college.id }}">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentName">Student Name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="form-group">
+                                <label for="prn">PRN Number</label>
+                                {{ form.prn }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                {{ form.department }}
+                            </div>
+                            <div class="form-group">
+                                <label for="studentPhoto">Upload Photo</label>
+                                {{ form.photo }}
+                            </div>
+                        </div>
+                        <div id="photoPreview" class="photo-preview"></div><br><br>
+                        <button type="submit" class="btn-primary w-100">Register Student</button>
+                    </form>
+                    <div id="message" class="message"></div>
+                </div>
+            </div>
+            {% if students %}
+            <div style="max-width: 1200px; margin: 50px auto 0; padding: 0 20px;">
+                <h3 style="margin-bottom: 20px; font-family: 'Playfair Display', serif; font-size: 1.8rem;">Registered Students</h3>
+                <div class="table-container" style="background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; backdrop-filter: blur(10px);">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: rgba(255, 255, 255, 0.05); border-bottom: 1px solid var(--border);">
+                                <th style="padding: 1.2rem; text-align: left; font-size: 0.9rem; color: var(--text-muted);">Photo</th>
+                                <th style="padding: 1.2rem; text-align: left; font-size: 0.9rem; color: var(--text-muted);">Name</th>
+                                <th style="padding: 1.2rem; text-align: left; font-size: 0.9rem; color: var(--text-muted);">PRN</th>
+                                <th style="padding: 1.2rem; text-align: left; font-size: 0.9rem; color: var(--text-muted);">Department</th>
+                                <th style="padding: 1.2rem; text-align: right; font-size: 0.9rem; color: var(--text-muted);">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 1rem 1.2rem;">
+                                    {% if student.photo %}
+                                        <img src="{{ student.photo.url }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;" alt="Photo">
+                                    {% else %}
+                                        <div style="width: 40px; height: 40px; border-radius: 8px; background: #334155; display: flex; align-items: center; justify-content: center;">
+                                            <i data-lucide="user" style="width: 20px;"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem 1.2rem; font-weight: 600;">{{ student.name }}</td>
+                                <td style="padding: 1rem 1.2rem;"><code>{{ student.prn }}</code></td>
+                                <td style="padding: 1rem 1.2rem;">{{ student.department }}</td>
+                                <td style="padding: 1rem 1.2rem; text-align: right;">
+                                    <a href="{% url 'tournament:edit_student_college' student.id %}" class="btn-primary-sm" style="padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                                        <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <h2 class="section-title" data-aos="fade-up">College Login</h2>
+            <div class="registration-container" style="max-width: 500px;" data-aos="zoom-in">
+                <div class="registration-card">
+                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Please login to register your team students.</p>
+                    <form id="loginForm" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="college_login_id">Select College</label>
+                            <select name="college_id" id="college_login_id" class="form-control" required>
+                                <option value="" disabled selected>-- Select Your College --</option>
+                                {% for college in colleges %}
+                                <option value="{{ college.id }}">{{ college.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">College Username</label>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn-primary w-100">Login to Register</button>
+                    </form>
+                    <div id="loginMessage" class="message"></div>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <!-- Goal Celebration Overlay -->
+    <div id="goalOverlay" class="goal-overlay" style="display: none;">
+        <div class="goal-content">
+            <h1 class="goal-text">GOAL!</h1>
+            <div class="football-animation">⚽</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2k26 Football Tournament. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const REGISTRATION_URL = "{% url 'tournament:registration_page' %}";
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'tournament/js/app.js' %}"></script>
+</body>
+
+</html>

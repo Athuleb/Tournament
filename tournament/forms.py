@@ -2,11 +2,11 @@ from django import forms
 from .models import Registration, College
 
 class RegistrationForm(forms.ModelForm):
-    college = forms.ModelChoiceField(
-        queryset=College.objects.all(),
-        empty_label="Select College",
-        widget=forms.Select(attrs={'class': 'form-control', 'id': 'collegeName'})
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['college'].queryset = College.objects.all()
+        self.fields['college'].empty_label = "Select College"
+        self.fields['college'].widget.attrs.update({'class': 'form-control', 'id': 'collegeName'})
 
     class Meta:
         model = Registration

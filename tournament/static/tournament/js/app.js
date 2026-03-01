@@ -38,6 +38,93 @@ document.addEventListener('DOMContentLoaded', () => {
     const photoInput = document.getElementById('studentPhoto');
     const photoPreview = document.getElementById('photoPreview');
 
+    // Login handling
+    const loginForm = document.getElementById('loginForm');
+    const loginMessage = document.getElementById('loginMessage');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.classList.add('btn-loading');
+            if (loginMessage) {
+                loginMessage.classList.remove('show');
+                loginMessage.innerHTML = '';
+            }
+
+            const formData = new FormData(loginForm);
+            const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+            const csrfToken = csrfElement ? csrfElement.value : '';
+
+            try {
+                // Determine registration URL if not defined globally
+                const fetchUrl = (typeof REGISTRATION_URL !== 'undefined') ? REGISTRATION_URL : window.location.pathname;
+
+                const response = await fetch(fetchUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                if (submitBtn) submitBtn.classList.remove('btn-loading');
+
+                if (data.status === 'login_success') {
+                    if (loginMessage) {
+                        loginMessage.innerHTML = `<i data-lucide="check-circle" style="width: 20px; height: 20px;"></i> <span>${data.message} Opening Registration Page...</span>`;
+                        loginMessage.className = 'message success show';
+                        if (window.lucide) lucide.createIcons();
+                    }
+
+                    // Direct redirect to registration page
+                    setTimeout(() => {
+                        window.location.href = '/registration/';
+                    }, 1000);
+                } else {
+                    if (loginMessage) {
+                        loginMessage.innerHTML = `<i data-lucide="alert-circle" style="width: 20px; height: 20px;"></i> <span>${data.message}</span>`;
+                        loginMessage.className = 'message error show';
+                        if (window.lucide) lucide.createIcons();
+                    }
+                }
+            } catch (error) {
+                if (submitBtn) submitBtn.classList.remove('btn-loading');
+                console.error('Error:', error);
+                if (loginMessage) {
+                    loginMessage.textContent = 'An error occurred. Please try again.';
+                    loginMessage.className = 'message error show';
+                }
+            }
+        });
+    }
+
+    // Function to Reset Form UI
+    const resetRegistrationUI = () => {
+        if (messageDiv) {
+            messageDiv.classList.remove('show');
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+                messageDiv.innerHTML = '';
+            }, 300);
+        }
+        const target = form || loginForm;
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Handle all "Register Now" links to ensure they "reopen" the form correctly
+    document.querySelectorAll('a[href="#register"], a[href="#login"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (messageDiv && messageDiv.classList.contains('show')) {
+                resetRegistrationUI();
+            }
+        });
+    });
+
     // Photo Preview
     if (photoInput) {
         photoInput.addEventListener('change', (e) => {
@@ -93,25 +180,59 @@ document.addEventListener('DOMContentLoaded', () => {
                         }, 2000);
                     }
 
-                    messageDiv.textContent = data.message;
+                    // Hide form and show success screen
+                    form.style.display = 'none';
+                    messageDiv.innerHTML = `
+                        <div class="success-screen">
+                            <i data-lucide="check-circle" style="width: 64px; height: 64px; color: var(--primary); margin-bottom: 20px;"></i>
+                            <h3>Registration Successful!</h3>
+                            <p>${data.message}</p>
+                            <p style="font-size: 0.9rem; color: var(--primary); margin-top: 15px;">Form will reopen automatically...</p>
+                        </div>
+                    `;
                     messageDiv.className = 'message success show';
+                    messageDiv.style.display = 'block';
 
-                    form.reset();
-                    if (photoPreview) photoPreview.innerHTML = '';
-
-                    // Smoothly scroll to message if on mobile
-                    if (window.innerWidth < 768) {
-                        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Initialize icon
+                    if (window.lucide) {
+                        lucide.createIcons();
                     }
+
+                    // Automatically reopen the form after 3.5 seconds
+                    setTimeout(() => {
+                        form.reset();
+                        if (photoPreview) photoPreview.innerHTML = '';
+
+                        // Fade out message and show form
+                        messageDiv.classList.remove('show');
+                        setTimeout(() => {
+                            messageDiv.style.display = 'none';
+                            form.style.display = 'block';
+                            form.style.opacity = '0';
+                            setTimeout(() => {
+                                form.style.transition = 'opacity 0.6s ease';
+                                form.style.opacity = '1';
+                            }, 50);
+                        }, 400);
+                    }, 3500);
                 } else {
-                    messageDiv.textContent = data.message;
+                    messageDiv.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <i data-lucide="alert-circle" style="width: 20px; height: 20px;"></i>
+                            <span>${data.message}</span>
+                        </div>
+                    `;
                     messageDiv.className = 'message error show';
+                    messageDiv.style.display = 'block';
+                    if (window.lucide) lucide.createIcons();
+                    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             } catch (error) {
                 submitBtn.classList.remove('btn-loading');
                 console.error('Error:', error);
                 messageDiv.textContent = 'An error occurred. Please try again.';
                 messageDiv.className = 'message error show';
+                messageDiv.style.display = 'block';
             }
         });
     }
