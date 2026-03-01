@@ -16,6 +16,17 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from django.conf import settings
 import os
 
+COLLEGE_CREDENTIALS = {
+    "iccspolytechnicmupliyam": "pbkdf2_sha256$1200000$n0P5mcgHrFy6wd7leFcmlI$SsWxNFo3hEz/W/z/7Nraov+KimrRcC3Zg8HqKvPEs/s=",
+    "metspolytechnicmala": "pbkdf2_sha256$1200000$gmdvUR0Pao8ILyX7GvpCYY$KN1pMixQ/doIOsp4q9uMBA63rFrHwJ1po/EbFAAIeH0=",
+    "holygracepolytechnicmala": "pbkdf2_sha256$1200000$2p6LvaCFNH9hWIdfsdNVEy$2lPtIN0a7lO7lwyL4fDqGrDnibW/xEhZcqxJYG2g84Q=",
+    "kkmmptckallettumkara": "pbkdf2_sha256$1200000$AHaVdL7OFJ2egjh5y2ltM2$N/cUAg4jPGBYp50yTvxmMgS8+TtWLJw2MjZiMDIknVI=",
+    "modelpolytechnicvadakara": "pbkdf2_sha256$1200000$2jYsYb6kgvDYl68lCotfsY$u2821neRZ1fwD/HN21hvVLdYU/G/e4V2VOlKNQq92ss=",
+    "govtpolytechnickunnakulam": "pbkdf2_sha256$1200000$52uovYOAQVrlU1J5pyIV5G$N9/EV416xxxFvW65EOzzvq4PuCQavNYqz7K9tClWBbE=",
+    "sreeramapolytechnicthriprayar": "pbkdf2_sha256$1200000$A2dfM2JmdJOrRJ8q44sXBp$JE9dlp0m+pWTBQofROmdPAh8J2nVft4zB4+Rkw2BN7o=",
+    "theyagarajapolytechnicamballur": "pbkdf2_sha256$1200000$21ozkFFlFLHXRAG8sCYNM6$hY4ViqbUqphA6/EiKWkIYzagfkgaoBgXVzaYncWOWEA=",
+}
+
 def index(request):
     college_id = request.session.get('college_id')
     logged_in_college = None
@@ -32,6 +43,15 @@ def index(request):
             college_id = request.POST.get('college_id')
             username = request.POST.get('username')
             password = request.POST.get('password')
+            # Check hardcoded credentials first
+            if username in COLLEGE_CREDENTIALS and check_password(password, COLLEGE_CREDENTIALS[username]):
+                try:
+                    college = College.objects.get(id=college_id)
+                    request.session['college_id'] = college.id
+                    return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
+                except College.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Selected college not found.'})
+
             try:
                 college = College.objects.get(id=college_id, username=username)
                 if check_password(password, college.password):
@@ -125,6 +145,15 @@ def registration_page(request):
             college_id = request.POST.get('college_id')
             username = request.POST.get('username')
             password = request.POST.get('password')
+            # Check hardcoded credentials first
+            if username in COLLEGE_CREDENTIALS and check_password(password, COLLEGE_CREDENTIALS[username]):
+                try:
+                    college = College.objects.get(id=college_id)
+                    request.session['college_id'] = college.id
+                    return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
+                except College.DoesNotExist:
+                    return JsonResponse({'status': 'error', 'message': 'Selected college not found.'})
+
             try:
                 college = College.objects.get(id=college_id, username=username)
                 if check_password(password, college.password):
@@ -219,8 +248,25 @@ def teams(request):
         "Mets polytechnic, mala",
         "Iccs polytechnic, mupliyam"
     ]
+    # Reverse map for credentials setup
+    CRED_MAP = {
+        "Theyagaraja polytechnic, amballur": ("theyagarajapolytechnicamballur", "TPA@bcd"),
+        "Sree rama polytechnic, thriprayar": ("sreeramapolytechnicthriprayar", "SRPT@uv"),
+        "Govt. Polytechnic, kunnakulam": ("govtpolytechnickunnakulam", "GPK@asd"),
+        "Model polytechnic, vadakara": ("modelpolytechnicvadakara", "MPV@wxy"),
+        "Kkmmptc, kallettumkara": ("kkmmptckallettumkara", "RAjesh"),
+        "Holy grace polytechnic, mala": ("holygracepolytechnicmala", "HGPM@hij"),
+        "Mets polytechnic, mala": ("metspolytechnicmala", "MPM@lmn"),
+        "Iccs polytechnic, mupliyam": ("iccspolytechnicmupliyam", "IPM@xyz")
+    }
+
     for name in college_names:
-        College.objects.get_or_create(name=name)
+        college, created = College.objects.get_or_create(name=name)
+        if created and name in CRED_MAP:
+            username, password = CRED_MAP[name]
+            college.username = username
+            college.password = password  # Model save() will hash it
+            college.save()
             
     colleges = College.objects.all().order_by('name')
     return render(request, 'tournament/teams.html', {'colleges': colleges})

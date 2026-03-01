@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password, identify_hasher
 
 class College(models.Model):
     name = models.CharField(max_length=200, unique=True)
@@ -12,6 +13,14 @@ class College(models.Model):
     @property
     def registration_count(self):
         return self.registrations.count()
+
+    def save(self, *args, **kwargs):
+        if self.password:
+            try:
+                identify_hasher(self.password)
+            except ValueError:
+                self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
 class Registration(models.Model):
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='registrations')
