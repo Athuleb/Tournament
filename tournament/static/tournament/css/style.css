@@ -171,6 +171,7 @@ body {
   opacity: 0;
   transform: translateY(30px);
   transition: all 0.8s ease-out;
+  scroll-margin-top: 80px;
 }
 
 .section.visible,
@@ -200,11 +201,11 @@ body {
 
 /* Hero Section */
 .hero {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 5%;
+  padding: 80px 5% 40px;
   gap: 4rem;
   position: relative;
   overflow: hidden;
@@ -291,16 +292,17 @@ body {
     justify-content: center;
     text-align: center;
     height: auto;
-    padding-top: 150px;
+    padding-top: 120px;
     padding-bottom: 80px;
   }
 
   .hero-content {
     margin-bottom: 50px;
+    max-width: 100%;
   }
 
   .hero p {
-    margin: 0 auto 3rem;
+    margin: 0 auto 2.5rem;
   }
 
   .hero-btns {
@@ -561,7 +563,7 @@ body {
 .form-group select:focus {
   outline: none;
   border-color: var(--primary);
-  background: rgba(105, 63, 63, 0.08);
+  background: rgba(0, 242, 254, 0.05);
 }
 
 .photo-preview {
@@ -702,23 +704,6 @@ body {
 /* Responsive Styles */
 /* Responsive Styles will follow below */
 
-@media (max-width: 1024px) {
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    height: auto;
-    padding-top: 120px;
-    padding-bottom: 60px;
-  }
-
-  .hero p {
-    margin: 0 auto 2rem;
-  }
-
-  .hero-btns {
-    justify-content: center;
-  }
-}
 
 @media (max-width: 768px) {
   .menu-toggle {
@@ -796,20 +781,6 @@ body {
     padding: 80px 5%;
   }
 
-  /* Coordinators Grid */
-  .coordinators-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
-
-  /* Sponsors Section */
-  .sponsors-scroll {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    animation: none;
-    /* Stop scrolling on mobile for better accessibility */
-  }
 
   .sponsor-item {
     min-width: 140px;
