@@ -46,14 +46,20 @@ def index(request):
             # Check hardcoded credentials first
             if username in COLLEGE_CREDENTIALS and check_password(password, COLLEGE_CREDENTIALS[username]):
                 try:
-                    college = College.objects.get(id=college_id)
+                    if str(college_id).isdigit():
+                        college = College.objects.get(id=college_id)
+                    else:
+                        college = College.objects.get(name=college_id)
                     request.session['college_id'] = college.id
                     return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
                 except College.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Selected college not found.'})
 
             try:
-                college = College.objects.get(id=college_id, username=username)
+                if str(college_id).isdigit():
+                    college = College.objects.get(id=college_id, username=username)
+                else:
+                    college = College.objects.get(name=college_id, username=username)
                 if check_password(password, college.password):
                     request.session['college_id'] = college.id
                     return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
@@ -117,7 +123,6 @@ def index(request):
                     error_msg += f"{clean_field}: {error['message']} "
             return JsonResponse({'status': 'error', 'message': error_msg})
 
-    colleges = College.objects.all()
     form = RegistrationForm()
     # If logged in, pre-select the college
     if logged_in_college:
@@ -125,7 +130,6 @@ def index(request):
         
     return render(request, 'tournament/index.html', {
         'form': form, 
-        'colleges': colleges,
         'logged_in_college': logged_in_college
     })
 
@@ -148,14 +152,20 @@ def registration_page(request):
             # Check hardcoded credentials first
             if username in COLLEGE_CREDENTIALS and check_password(password, COLLEGE_CREDENTIALS[username]):
                 try:
-                    college = College.objects.get(id=college_id)
+                    if str(college_id).isdigit():
+                        college = College.objects.get(id=college_id)
+                    else:
+                        college = College.objects.get(name=college_id)
                     request.session['college_id'] = college.id
                     return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
                 except College.DoesNotExist:
                     return JsonResponse({'status': 'error', 'message': 'Selected college not found.'})
 
             try:
-                college = College.objects.get(id=college_id, username=username)
+                if str(college_id).isdigit():
+                    college = College.objects.get(id=college_id, username=username)
+                else:
+                    college = College.objects.get(name=college_id, username=username)
                 if check_password(password, college.password):
                     request.session['college_id'] = college.id
                     return JsonResponse({'status': 'login_success', 'message': f'Welcome, {college.name}!'})
@@ -190,7 +200,6 @@ def registration_page(request):
         else:
             return JsonResponse({'status': 'error', 'message': 'Form invalid'})
 
-    colleges = College.objects.all()
     form = RegistrationForm()
     students = []
     if logged_in_college:
@@ -199,7 +208,6 @@ def registration_page(request):
         
     return render(request, 'tournament/registration.html', {
         'form': form, 
-        'colleges': colleges,
         'logged_in_college': logged_in_college,
         'students': students
     })
