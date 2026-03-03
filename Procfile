@@ -1,1 +1,1 @@
-web: gunicorn football_site.wsgi:application
+web: python manage.py migrate && python manage.py seed_colleges && gunicorn football_site.wsgi:application
