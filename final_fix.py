@@ -4,8 +4,8 @@ file_path = r'd:\project\Tournament\tournament\templates\tournament\admin_dashbo
 
 # The exact target lines that are broken
 broken_lines = [
-    '<option value="Theyagaraja polytechnic, amballur" {% if',
-    'selected_college=="Theyagaraja polytechnic, amballur" %}selected{% endif %}>Theyagaraja',
+    '<option value="Thiagarajar Polytechnic, Amballur" {% if',
+    'selected_college=="Thiagarajar Polytechnic, Amballur" %}selected{% endif %}>Theyagaraja',
     'polytechnic, amballur</option>',
     '<option value="Sree rama polytechnic, thriprayar" {% if',
     'selected_college=="Sree rama polytechnic, thriprayar" %}selected{% endif %}>Sree rama',
@@ -20,7 +20,7 @@ broken_lines = [
 
 # The correct hardcoded list
 colleges = [
-    "Theyagaraja polytechnic, amballur",
+    "Thiagarajar Polytechnic, Amballur",
     "Sree rama polytechnic, thriprayar",
     "Govt. Polytechnic, kunnakulam",
     "Model polytechnic, vadakara",

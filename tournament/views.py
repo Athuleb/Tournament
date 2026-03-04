@@ -18,7 +18,7 @@ import os
 
 # Hardcoded College Data
 HARDCODED_COLLEGES = {
-    "Theyagaraja polytechnic, amballur": {"username": "theyagarajapolytechnicamballur", "password_hash": "pbkdf2_sha256$1200000$21ozkFFlFLHXRAG8sCYNM6$hY4ViqbUqphA6/EiKWkIYzagfkgaoBgXVzaYncWOWEA="},
+    "Thiagarajar Polytechnic, Amballur": {"username": "thiagarajarpolytechnicamballur", "password_hash": "pbkdf2_sha256$1200000$21ozkFFlFLHXRAG8sCYNM6$hY4ViqbUqphA6/EiKWkIYzagfkgaoBgXVzaYncWOWEA="},
     "Sree rama polytechnic, thriprayar": {"username": "sreeramapolytechnicthriprayar", "password_hash": "pbkdf2_sha256$1200000$A2dfM2JmdJOrRJ8q44sXBp$JE9dlp0m+pWTBQofROmdPAh8J2nVft4zB4+Rkw2BN7o="},
     "Govt. Polytechnic, kunnakulam": {"username": "govtpolytechnickunnakulam", "password_hash": "pbkdf2_sha256$1200000$52uovYOAQVrlU1J5pyIV5G$N9/EV416xxxFvW65EOzzvq4PuCQavNYqz7K9tClWBbE="},
     "Model polytechnic, vadakara": {"username": "modelpolytechnicvadakara", "password_hash": "pbkdf2_sha256$1200000$2jYsYb6kgvDYl68lCotfsY$u2821neRZ1fwD/HN21hvVLdYU/G/e4V2VOlKNQq92ss="},

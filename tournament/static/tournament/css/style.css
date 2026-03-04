@@ -165,6 +165,10 @@ body {
   display: inline-block;
 }
 
+.btn-mobile-only {
+  display: none;
+}
+
 /* Sections */
 .section {
   padding: 100px 5%;
@@ -204,17 +208,33 @@ body {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 80px 5% 40px;
-  gap: 4rem;
+  gap: 2rem;
   position: relative;
   overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 100%);
+  backdrop-filter: blur(8px); /* Adds 30% perceptual blur to background */
+  z-index: 1;
 }
 
 .hero-content {
   flex: 1;
-  max-width: 650px;
+  max-width: 800px;
   z-index: 2;
+  text-align: left;
 }
 
 .hero h1 {
@@ -228,15 +248,21 @@ body {
 
 .hero p {
   font-size: 1.2rem;
-  color: var(--text-muted);
+  color: rgba(
+    255,
+    255,
+    255,
+    0.9
+  ); /* Brighter for better contrast on background */
   line-height: 1.8;
   margin-bottom: 3rem;
-  max-width: 550px;
+  max-width: 700px;
 }
 
 .hero-btns {
   display: flex;
   gap: 1.5rem;
+  justify-content: flex-start;
 }
 
 .hero-image-container {
@@ -263,15 +289,11 @@ body {
   width: 100%;
   max-width: 550px;
   height: auto;
-  border-radius: 30px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--border);
   transition: var(--transition);
   animation: float 6s ease-in-out infinite;
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -283,11 +305,13 @@ body {
 }
 
 .hero-img:hover {
-  transform: scale(1.02) !important;
-  box-shadow: 0 40px 80px rgba(0, 242, 254, 0.2);
+  transform: scale(1.02);
 }
 
 @media (max-width: 1024px) {
+  .hero-image-container {
+    display: none;
+  }
   .hero {
     flex-direction: column;
     justify-content: center;
@@ -308,10 +332,24 @@ body {
 
   .hero-btns {
     justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .btn-mobile-only {
+    display: inline-block;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .explore-btn {
+    width: 100%;
+    text-align: center;
   }
 
   .hero-img {
-    max-width: 450px;
+    max-width: 350px;
   }
 }
 
@@ -501,9 +539,11 @@ body {
 }
 
 .registration-card {
-  background: linear-gradient(135deg,
-      rgba(30, 41, 59, 0.8),
-      rgba(15, 23, 42, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.8),
+    rgba(15, 23, 42, 0.9)
+  );
   border: 1px solid var(--border);
   border-radius: 30px;
   padding: 3.5rem;
@@ -520,7 +560,6 @@ body {
   }
 }
 
-
 .registration-card::before {
   content: "";
   position: absolute;
@@ -528,9 +567,11 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle,
-      rgba(0, 242, 254, 0.05) 0%,
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(0, 242, 254, 0.05) 0%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
@@ -709,7 +750,6 @@ body {
 /* Responsive Styles */
 /* Responsive Styles will follow below */
 
-
 @media (max-width: 768px) {
   .menu-toggle {
     display: flex;
@@ -777,7 +817,6 @@ body {
     font-size: 2.2rem;
   }
 
-
   .hero p {
     font-size: 1rem;
     max-width: 100%;
@@ -786,8 +825,6 @@ body {
   .section {
     padding: 60px 4%;
   }
-
-
 
   .sponsor-item {
     min-width: 140px;
@@ -814,20 +851,6 @@ body {
     margin-right: auto;
   }
 
-  .hero-btns {
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .btn-primary,
-  .btn-secondary,
-  .btn-primary-sm {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
 
   .hero-img-container {
     margin-top: 30px;
@@ -913,7 +936,6 @@ footer a:hover {
 }
 
 @keyframes floatAround {
-
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);
@@ -1028,9 +1050,11 @@ footer a:hover {
 
 .contact-section {
   padding: 120px 5%;
-  background: radial-gradient(circle at center,
-      rgba(0, 242, 254, 0.03) 0%,
-      var(--bg) 70%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 242, 254, 0.03) 0%,
+    var(--bg) 70%
+  );
   position: relative;
   overflow: hidden;
 }
@@ -1279,7 +1303,6 @@ footer a:hover {
   color: #000;
 }
 
-
 #college_login_id {
   background-color: #1e1e1e;
   color: #ffffff;
@@ -1327,7 +1350,6 @@ footer a:hover {
 }
 
 @media (max-width: 600px) {
-
   .table-responsive table th:nth-child(3),
   .table-responsive table td:nth-child(3) {
     display: none;

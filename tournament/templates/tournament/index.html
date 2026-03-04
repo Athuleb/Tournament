@@ -43,7 +43,7 @@
 
     <main>
         <!-- Home Section -->
-        <section id="home" class="hero">
+        <section id="home" class="hero" style="background-image: url('{% static "tournament/images/college2.jpg" %}');">
             <div class="overlay"></div>
             <div class="hero-content" data-aos="fade-right">
                 <h1 class="fade-in">KKMMPTC Kallettumkara Thrissur</h1>
@@ -59,11 +59,11 @@
                     {% comment %} <a href="#gallery" class="btn-primary">Explore Tournament</a> {% endcomment %}
                     <a href="{% url 'tournament:teams' %}" class="explore-btn">View Teams</a>
                     <a href="#contact" class="btn-secondary">Contact Us</a>
+                    <a href="#login" class="btn-primary btn-mobile-only">Login Now</a>
                 </div>
             </div>
-            <div class="hero-image-container" data-aos="fade-left" data-aos-delay="200">
-                <img src="{% static 'tournament/images/college2.jpg' %}" alt="KKMMPTC College Building"
-                    class="hero-img">
+            <div class="hero-image-container" data-aos="fade-left">
+                <img src="{% static 'tournament/images/kick.png' %}" alt="Football Action" class="hero-img">
             </div>
         </section>
 
@@ -196,8 +196,7 @@
                             <label for="college_login_id">Select College</label>
                             <select name="college_id" id="college_login_id" class="form-control" required>
                                 <option value="" disabled selected>-- Select Your College --</option>
-                                <option value="Theyagaraja polytechnic, amballur">Theyagaraja polytechnic, amballur
-                                </option>
+                                <option value="Thiagarajar Polytechnic, Amballur">Thiagarajar Polytechnic, Amballur</option>
                                 <option value="Sree rama polytechnic, thriprayar">Sree rama polytechnic, thriprayar
                                 </option>
                                 <option value="Govt. Polytechnic, kunnakulam">Govt. Polytechnic, kunnakulam</option>

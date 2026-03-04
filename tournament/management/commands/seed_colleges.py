@@ -6,7 +6,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         college_names = [
-            "Theyagaraja polytechnic, amballur",
+            "Thiagarajar Polytechnic, Amballur",
             "Sree rama polytechnic, thriprayar",
             "Govt. Polytechnic, kunnakulam",
             "Model polytechnic, vadakara",
@@ -17,7 +17,7 @@ class Command(BaseCommand):
         ]
         # Reverse map for credentials setup
         CRED_MAP = {
-            "Theyagaraja polytechnic, amballur": ("theyagarajapolytechnicamballur", "TPA@bcd"),
+            "Thiagarajar Polytechnic, Amballur": ("thiagarajarpolytechnicamballur", "TPA@bcd"),
             "Sree rama polytechnic, thriprayar": ("sreeramapolytechnicthriprayar", "SRPT@uv"),
             "Govt. Polytechnic, kunnakulam": ("govtpolytechnickunnakulam", "GPK@asd"),
             "Model polytechnic, vadakara": ("modelpolytechnicvadakara", "MPV@wxy"),
