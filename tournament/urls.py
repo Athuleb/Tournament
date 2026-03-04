@@ -8,7 +8,7 @@ urlpatterns = [
     path('registration/', views.registration_page, name='registration_page'),
     path('teams/', views.teams, name='teams'),
     path('college-logout/', views.college_logout, name='college_logout'),
-    path('download-pdf/<int:college_id>/', views.download_pdf, name='download_pdf'),
+    path('download-pdf/', views.download_pdf, name='download_pdf'),
     path('edit-student/<int:student_id>/', views.edit_student_college, name='edit_student_college'),
     
     # Custom Admin Routes
@@ -19,3 +19,4 @@ urlpatterns = [
     path('admin-panel/student/edit/<int:student_id>/', views.edit_student, name='edit_student'),
     path('admin-panel/student/delete/<int:student_id>/', views.delete_student, name='delete_student'),
 ]
+

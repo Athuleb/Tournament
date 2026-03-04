@@ -77,13 +77,36 @@ WSGI_APPLICATION = 'football_site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+#         conn_max_age=600
+#     )
+# }
 
+
+
+# Database configuration with Render/PostgreSQL support and local SQLite fallback
+# DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = "postgresql://athul:d9DE0JsT6mO1k4idcXReQwixMWkihQ9a@dpg-d6jfi3ggjchc73foafpg-a.oregon-postgres.render.com/backend_3x54"
+
+if DATABASE_URL:
+    print("🚀 Using PRODUCTION Database (PostgreSQL)")
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True   # 🔥 THIS FIXES SSL ERROR ON RENDER
+        )
+    }
+# else:
+#     print("🏠 Using LOCAL Database (SQLite)")
+#     DATABASES = {
+#         'default': dj_database_url.config(
+#             default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+#             conn_max_age=600
+#         )
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

@@ -1,4 +1,7 @@
-﻿{% load static %}
+import os
+
+FILE_PATH = r"d:\project\Tournament\tournament\templates\tournament\admin_dashboard.html"
+CONTENT = """{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -93,7 +96,8 @@
         }
 
         .actions {
-            display: flex; gap: 10px;
+            display: flex;
+            gap: 10px;
         }
 
         .logout-btn {
@@ -121,32 +125,6 @@
             border-radius: 10px;
             outline: none;
         }
-        .btn-primary-sm {
-    background: var(--primary);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-    display: inline-flex;
-    align-items: center;
-}
-
-.btn-primary-sm:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
-}
-
-.filter-select option {
-    background-color: #1e293b;
-    /* dropdown option background */
-    color: #f8fafc;
-    /* dropdown option text color */
-}
     </style>
 </head>
 
@@ -177,14 +155,9 @@
                 <form method="GET" style="display: flex; gap: 10px;">
                     <select name="college" class="filter-select" onchange="this.form.submit()">
                         <option value="">All Colleges</option>
-                        <option value="Theyagaraja polytechnic, amballur" {% if selected_college == "Theyagaraja polytechnic, amballur" %}selected{% endif %}>Theyagaraja polytechnic, amballur</option>
-                        <option value="Sree rama polytechnic, thriprayar" {% if selected_college == "Sree rama polytechnic, thriprayar" %}selected{% endif %}>Sree rama polytechnic, thriprayar</option>
-                        <option value="Govt. Polytechnic, kunnakulam" {% if selected_college == "Govt. Polytechnic, kunnakulam" %}selected{% endif %}>Govt. Polytechnic, kunnakulam</option>
-                        <option value="Model polytechnic, vadakara" {% if selected_college == "Model polytechnic, vadakara" %}selected{% endif %}>Model polytechnic, vadakara</option>
-                        <option value="Kkmmptc, kallettumkara" {% if selected_college == "Kkmmptc, kallettumkara" %}selected{% endif %}>Kkmmptc, kallettumkara</option>
-                        <option value="Holy grace polytechnic, mala" {% if selected_college == "Holy grace polytechnic, mala" %}selected{% endif %}>Holy grace polytechnic, mala</option>
-                        <option value="Mets polytechnic, mala" {% if selected_college == "Mets polytechnic, mala" %}selected{% endif %}>Mets polytechnic, mala</option>
-                        <option value="Iccs polytechnic, mupliyam" {% if selected_college == "Iccs polytechnic, mupliyam" %}selected{% endif %}>Iccs polytechnic, mupliyam</option>
+                        {% for college in colleges %}
+                        <option value="{{ college }}" {% if selected_college == college %}selected{% endif %}>{{ college }}</option>
+                        {% endfor %}
                     </select>
                 </form>
 
@@ -244,7 +217,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
                             No registrations found.
                         </td>
                     </tr>
@@ -260,3 +233,8 @@
 </body>
 
 </html>
+\"\"\"
+
+with open(FILE_PATH, 'w', encoding='utf-8') as f:
+    f.write(CONTENT)
+print("Updated successfully")

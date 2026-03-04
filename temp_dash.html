@@ -93,7 +93,8 @@
         }
 
         .actions {
-            display: flex; gap: 10px;
+            display: flex;
+            gap: 10px;
         }
 
         .logout-btn {
@@ -121,32 +122,6 @@
             border-radius: 10px;
             outline: none;
         }
-        .btn-primary-sm {
-    background: var(--primary);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-    display: inline-flex;
-    align-items: center;
-}
-
-.btn-primary-sm:hover {
-    background: #0056b3;
-    transform: translateY(-2px);
-}
-
-.filter-select option {
-    background-color: #1e293b;
-    /* dropdown option background */
-    color: #f8fafc;
-    /* dropdown option text color */
-}
     </style>
 </head>
 
@@ -171,20 +146,34 @@
         {% endif %}
 
         <div class="filter-bar">
-            <h2>Registrations <span style="color: var(--text-muted); font-size: 1rem; font-weight: 400;">({{ students.count }} total)</span></h2>
+            <h2>Registrations <span style="color: var(--text-muted); font-size: 1rem; font-weight: 400;">({{
+                    students.count }} total)</span></h2>
 
             <div class="actions">
                 <form method="GET" style="display: flex; gap: 10px;">
                     <select name="college" class="filter-select" onchange="this.form.submit()">
                         <option value="">All Colleges</option>
-                        <option value="Theyagaraja polytechnic, amballur" {% if selected_college == "Theyagaraja polytechnic, amballur" %}selected{% endif %}>Theyagaraja polytechnic, amballur</option>
-                        <option value="Sree rama polytechnic, thriprayar" {% if selected_college == "Sree rama polytechnic, thriprayar" %}selected{% endif %}>Sree rama polytechnic, thriprayar</option>
-                        <option value="Govt. Polytechnic, kunnakulam" {% if selected_college == "Govt. Polytechnic, kunnakulam" %}selected{% endif %}>Govt. Polytechnic, kunnakulam</option>
-                        <option value="Model polytechnic, vadakara" {% if selected_college == "Model polytechnic, vadakara" %}selected{% endif %}>Model polytechnic, vadakara</option>
-                        <option value="Kkmmptc, kallettumkara" {% if selected_college == "Kkmmptc, kallettumkara" %}selected{% endif %}>Kkmmptc, kallettumkara</option>
-                        <option value="Holy grace polytechnic, mala" {% if selected_college == "Holy grace polytechnic, mala" %}selected{% endif %}>Holy grace polytechnic, mala</option>
-                        <option value="Mets polytechnic, mala" {% if selected_college == "Mets polytechnic, mala" %}selected{% endif %}>Mets polytechnic, mala</option>
-                        <option value="Iccs polytechnic, mupliyam" {% if selected_college == "Iccs polytechnic, mupliyam" %}selected{% endif %}>Iccs polytechnic, mupliyam</option>
+                        <option value="Theyagaraja polytechnic, amballur" {% if
+                            selected_college=="Theyagaraja polytechnic, amballur" %}selected{% endif %}>Theyagaraja
+                            polytechnic, amballur</option>
+                        <option value="Sree rama polytechnic, thriprayar" {% if
+                            selected_college=="Sree rama polytechnic, thriprayar" %}selected{% endif %}>Sree rama
+                            polytechnic, thriprayar</option>
+                        <option value="Govt. Polytechnic, kunnakulam" {% if
+                            selected_college=="Govt. Polytechnic, kunnakulam" %}selected{% endif %}>Govt. Polytechnic,
+                            kunnakulam</option>
+                        <option value="Model polytechnic, vadakara" {% if
+                            selected_college=="Model polytechnic, vadakara" %}selected{% endif %}>Model polytechnic,
+                            vadakara</option>
+                        <option value="Kkmmptc, kallettumkara" {% if selected_college=="Kkmmptc, kallettumkara"
+                            %}selected{% endif %}>Kkmmptc, kallettumkara</option>
+                        <option value="Holy grace polytechnic, mala" {% if
+                            selected_college=="Holy grace polytechnic, mala" %}selected{% endif %}>Holy grace
+                            polytechnic, mala</option>
+                        <option value="Mets polytechnic, mala" {% if selected_college=="Mets polytechnic, mala"
+                            %}selected{% endif %}>Mets polytechnic, mala</option>
+                        <option value="Iccs polytechnic, mupliyam" {% if selected_college=="Iccs polytechnic, mupliyam"
+                            %}selected{% endif %}>Iccs polytechnic, mupliyam</option>
                     </select>
                 </form>
 

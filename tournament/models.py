@@ -1,29 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import make_password, identify_hasher
-
-class College(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    username = models.CharField(max_length=150, unique=True, null=True, blank=True)
-    password = models.CharField(max_length=128, null=True, blank=True)
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def registration_count(self):
-        return self.registrations.count()
-
-    def save(self, *args, **kwargs):
-        if self.password:
-            try:
-                identify_hasher(self.password)
-            except ValueError:
-                self.password = make_password(self.password)
-        super().save(*args, **kwargs)
 
 class Registration(models.Model):
-    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='registrations')
+    college = models.CharField(max_length=200) # Now stores the hardcoded college name
     name = models.CharField(max_length=100)
     prn = models.CharField(max_length=50, unique=True)
     department = models.CharField(max_length=100)
@@ -31,16 +10,11 @@ class Registration(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
-        # Only check if college is assigned
-        try:
-            if not self.pk and self.college and self.college.registrations.count() >= 18:
-                raise ValidationError(f"The 18 student registration for {self.college.name} is completed.")
-        except (College.DoesNotExist, AttributeError):
-            pass
+        # Limit check will be handled in the view since it's hardcoded and logic is simpler there
+        pass
 
     def save(self, *args, **kwargs):
-        # self.full_clean() # We'll skip call here to avoid double check if view handles it
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} ({self.college.name})"
+        return f"{self.name} ({self.college})"
